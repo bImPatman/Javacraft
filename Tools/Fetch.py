@@ -53,8 +53,6 @@ else:
         print(str("\n".join(search(current_text, clientlist))))
         print("🔍 " + str(current_text))
 
-    print("Downloading Minecraft " + str(version))
-
     for i in versiondatabase["versions"]:
         if i["id"] == version:
             url = i["url"]
@@ -69,40 +67,31 @@ output_path = output_path / (version + ".jar")
 if output_path.is_file():
     print("Minecraft " + str(version) + " is already downloaded. Skipping.")
 else:
-    with requests.get(url, stream=True) as response:
-        response.raise_for_status() # Raise error for bad status codes
-        with open(output_path, "wb") as file:
-            # Download the file in chunks of 8192 bytes
-            for chunk in response.iter_content(chunk_size=8192): 
-                if chunk:
-                    file.write(chunk)
+    import os
+    import minecraft_launcher_lib
 
-    print("Download Complete!")
+    # Define your target subdirectory
+    TARGET_SUBDIR = os.path.join(os.getcwd(), "Downloads")
+    VERSION_ID = version
 
-if style == "url":
-    input("I don't know the libraries to download. Get them yourself and put them in the /Downloads/libs folder.")
-else:
-    print("Downloading Libraries!")
-    downloaded = 0
-    for lib in mcjson["libraries"]:
-        liburl = lib["downloads"]["artifact"]["url"]
+    print(f"Downloading version, libraries, and assets into: {TARGET_SUBDIR}...")
 
-        output_path = Path("Downloads") / "libs"
-        output_path.mkdir(parents=True, exist_ok=True)
-        output_path = output_path / (str(lib["downloads"]["artifact"]["url"].split("/")[-1]) + ".jar")
+    # 1. Download the version client jar and all associated libraries
+    minecraft_launcher_lib.install.install_minecraft_version(
+        version=VERSION_ID,
+        minecraft_directory=TARGET_SUBDIR
+    )
 
-        if output_path.is_file():
-            print("Library " + (str(lib["downloads"]["artifact"]["url"].split("/")[-1]) + " is already downloaded. Skipping."))
-            continue
+    # 2. Extract the native libraries required by the version into a 'natives' folder
+    natives_directory = os.path.join(TARGET_SUBDIR, "versions", VERSION_ID, "natives")
+    print(f"Extracting native binaries into: {natives_directory}...")
 
-        with requests.get(liburl, stream=True) as response:
-            response.raise_for_status() # Raise error for bad status codes
-            with open(output_path, "wb") as file:
-                # Download the file in chunks of 8192 bytes
-                for chunk in response.iter_content(chunk_size=8192): 
-                    if chunk:
-                        file.write(chunk)
-        downloaded += 1
-        print(str(lib["downloads"]["artifact"]["url"].split("/")[-1]) + " downloaded (" + str(downloaded) + "/" + str(len(mcjson["libraries"])) + ")")
+    minecraft_launcher_lib.natives.extract_natives(
+        version=VERSION_ID,
+        minecraft_directory=TARGET_SUBDIR,
+        extract_path=natives_directory
+    )
+
+    print("Download complete!")
 
 print("Done! Now run\n\npython Tools/Decompile.py")
