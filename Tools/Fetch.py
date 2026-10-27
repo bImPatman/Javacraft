@@ -1,6 +1,9 @@
 import readchar
 import requests
 from pathlib import Path
+import os
+import minecraft_launcher_lib
+from github import Github
 
 versiondatabase = {}
 version = ""
@@ -67,8 +70,6 @@ output_path = output_path / (version + ".jar")
 if output_path.is_file():
     print("Minecraft " + str(version) + " is already downloaded. Skipping.")
 else:
-    import os
-    import minecraft_launcher_lib
 
     # Define your target subdirectory
     TARGET_SUBDIR = os.path.join(os.getcwd(), "Downloads")
@@ -95,7 +96,35 @@ else:
     print("Download complete!")
 
     (Path("Downloads") / "version.txt").write_text(version)
+print("Done! Now Downloading vineflower...")
+if((Path("Downloads") / "vineflower.jar").is_file()):
+    print("Vineflower is already downloaded. Skipping...")
+else:
+    g = Github()
 
+    repo = g.get_repo("Vineflower/vineflower")
+    latest_release = repo.get_latest_release()
+
+    download_url = None
+    filename = None
+
+    for asset in latest_release.get_assets():
+        if asset.name.endswith(".jar") and not asset.name.endswith("-slim.jar"):
+            download_url = asset.browser_download_url
+            filename = asset.name
+            break
+
+    if download_url and filename:
+        print(f"Downloading {filename}...")
+        response = requests.get(download_url, stream=True)
+        response.raise_for_status()
+
+        with open(Path("Downloads") / "vineflower.jar", "wb") as f:
+            for chunk in response.iter_content(chunk_size=8192):
+                f.write(chunk)
+        print("Download complete!")
+    else:
+        print("Vineflower not found!")
 print("Done! Now run\n\npython Tools\\Decompile.py")
 print()
 print("Run python Tools\\RunRaw.py if you want to test your installation.\n(Only if you installed via version)")
