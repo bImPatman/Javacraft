@@ -94,4 +94,8 @@ else:
 
     print("Download complete!")
 
-print("Done! Now run\n\npython Tools/Decompile.py")
+    (Path("Downloads") / "version.txt").write_text(version)
+
+print("Done! Now run\n\npython Tools\\Decompile.py")
+print()
+print("Run python Tools\\RunRaw.py if you want to test your installation.\n(Only if you installed via version)")
