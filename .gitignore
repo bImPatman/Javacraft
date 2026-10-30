@@ -3,4 +3,7 @@
 /Patches/
 /Shims/
 /Bridges/
-/src/
+/src/*
+/build/*
+/.gradle/*
+/gradle/*

@@ -1,4 +1,5 @@
 Disclaimer: This repository does not contain any copyrighted material, including Minecraft.
+
 # Minecraft-Transpiler
 This is a custom Minecraft to JS/WASM transpiler made with teavm.
 
@@ -9,9 +10,12 @@ Instead of rewriting all of the libraries that Minecraft depends on, this projec
 The reason being that replicating the execution of the target library is difficult and complex.
 Replicating a native changes the approach derastically, and might make this project a lot for feasable.
 
-Even though this project is focused on creating web-based natives, it includes the functionality to re-create the libraries (bridges), natives (shims), and lets you patch everything from Minecraft to the libraries.
+Even though this project is focused on creating web-based natives, it includes the functionality to re-create the libraries (bridges), natives (shims), and lets you patch everything from Minecraft to the libraries. Even then, if you want you can use this just for Minecraft modding (although that would be kind of overkill.)
 
-Directory structure:
+# Current status:
+rd-132211 can be decompiled, and then compiled and ran again. If you modify the code in /src/ then the effects take place on the compiled varient.
+
+# Directory structure:
 ```
 Javacraft/
 ├── Documentation/ (Contains documentation)

@@ -1,0 +1,37 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation fileTree(dir: 'Downloads/libraries', include: ['**/*.jar'])
+}
+
+application {
+    mainClass = 'minecraft.com.mojang.rubydung'
+}
+
+tasks.named("jar") {
+    manifest {
+        attributes(
+            "Main-Class":"com.mojang.rubydung.RubyDung",
+            "Implementation-Title": "Javacraft"
+        )
+    }
+}
+
+sourceSets {
+    main {
+        resources {
+            srcDirs java.srcDirs
+        }
+    }
+}
+
+processResources {
+    exclude '**/*.java'
+}
